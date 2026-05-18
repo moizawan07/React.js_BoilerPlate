@@ -1,0 +1,1 @@
+const WEB_NAME = 'Admin Panel'
