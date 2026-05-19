@@ -4,42 +4,53 @@ import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import toast from "react-hot-toast";
 import { login } from "../../../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
-// import { useAuth } from "../../context/AuthContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "../../../validators/auth";
+import { useLoginApiMutation } from "../../../redux/services/modules/auth/authApi";
 
 const Login = () => {
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("admin@gmail.com");
-  const [password, setPassword] = useState("123456");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const [loginApi] = useLoginApiMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "admin@gmail.com",
+      password: "123456",
+    },
+  });
 
-    if (!email || !password) {
-      toast.error("Please fill in all fields.");
-      return;
-    }
-
+  const handleSubmit = async (data: LoginFormData) => {
+    console.log('data ==>', data);
+    
     setLoading(true);
 
     try {
-      //api call here when ready
-    //  const result = loginApi(email, password)
-    const mockApiResult = {name: "Moiz Ahmed", email: "moiz123@gmail.com", role: "admin"}
+      // API call - Uncomment and use when backend is ready
+      // const result = await loginApi(data);
+      // Expected response: { user: { name, email, role }, token: string }
 
-    dispatch(login({user:mockApiResult, token: "kkkkk", isAuthinticated: true}))
+      const mockApiResult = {
+        name: "Moiz Ahmed",
+        email: "moiz123@gmail.com",
+        role: "admin",
+      };
 
-   
+      dispatch(
+        login({ user: mockApiResult, token: "kkkkk", isAuthinticated: true }),
+      );
 
-        toast.success(
-          `Welcome back 👋`
-        );
+      toast.success(`Welcome back 👋`);
 
-        navigate("/dashboard");
-    
+      navigate("/dashboard");
     } catch (error) {
       toast.error("Login failed. Please try again.");
     } finally {
@@ -89,7 +100,7 @@ const Login = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleFormSubmit(handleSubmit)} className="space-y-5">
             {/* Email */}
             <div>
               <label
@@ -111,23 +122,31 @@ const Login = () => {
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...register("email")}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border text-sm transition-all duration-200"
                   style={{
-                    borderColor: "rgba(20, 71, 230, 0.2)",
+                    borderColor: errors.email
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)",
                     outline: "none",
                   }}
                   onFocus={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--primary)")
+                    (e.currentTarget.style.borderColor = errors.email
+                      ? "#ef4444"
+                      : "var(--primary)")
                   }
                   onBlur={(e) =>
-                    (e.currentTarget.style.borderColor =
-                      "rgba(20, 71, 230, 0.2)")
+                    (e.currentTarget.style.borderColor = errors.email
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)")
                   }
                 />
               </div>
+              {errors.email && (
+                <p className="text-xs text-error mt-1 pl-2">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Password */}
@@ -151,20 +170,23 @@ const Login = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  {...register("password")}
                   className="w-full pl-10 pr-11 py-3 rounded-xl border text-sm transition-all duration-200"
                   style={{
-                    borderColor: "rgba(20, 71, 230, 0.2)",
+                    borderColor: errors.password
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)",
                     outline: "none",
                   }}
                   onFocus={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--primary)")
+                    (e.currentTarget.style.borderColor = errors.password
+                      ? "#ef4444"
+                      : "var(--primary)")
                   }
                   onBlur={(e) =>
-                    (e.currentTarget.style.borderColor =
-                      "rgba(20, 71, 230, 0.2)")
+                    (e.currentTarget.style.borderColor = errors.password
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)")
                   }
                 />
 
@@ -174,13 +196,14 @@ const Login = () => {
                   className="absolute right-3.5 top-1/2 -translate-y-1/2"
                   style={{ color: "#9ca3af" }}
                 >
-                  {showPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-xs text-error mt-1 pl-2">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Forgot Password */}
@@ -228,8 +251,6 @@ const Login = () => {
               )}
             </button>
           </form>
-
-         
         </div>
       </div>
     </div>

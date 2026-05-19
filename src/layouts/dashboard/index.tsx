@@ -11,10 +11,10 @@ function Page({ children }: any) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const user = useSelector(selectUser);
   const navItems = getNavItemsByRole(user?.role);
-  const {theme} = useThemeContext()
+  const {theme} = useThemeContext();
 
   return (
-    <div className={`flex ${theme === 'light' ? "bg-gray-100": "bg-background/95"} bg-background/99 relative min-h-screen`}>
+    <div className={`flex ${theme === 'light' ? "bg-gray-100" : "bg-background/95"}  relative min-h-screen`}>
 
       
       {sideBarOn && (

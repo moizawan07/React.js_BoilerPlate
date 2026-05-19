@@ -2,45 +2,50 @@ import { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Lock, Eye, EyeOff, KeyRound, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  resetPasswordSchema,
+  type ResetPasswordFormData,
+} from "../../../validators/auth";
+// import { resetPasswordApi } from "../../../redux/services/modules/auth/authApi"; // Uncomment when backend is ready
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "dummy-token";
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+  });
 
-    if (!password || !confirmPassword) {
-      toast.error("Please fill in all fields.");
-      return;
-    }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
-    }
+  const passwordValue = watch("password");
 
-    // ── Dummy flow (remove when API is ready) ─────────────────────────────
-    if (token === "dummy-token") {
-      toast.success("Password reset successfully! Please log in.");
-      navigate("/login");
-      return;
-    }
-
-    // ── Real API call ─────────────────────────────────────────────────────
+  const handleSubmit = async (data: ResetPasswordFormData) => {
     setLoading(true);
+
     try {
-      // const { data } = await resetPasswordApi({ token, password, confirmPassword });
+      // API call - Uncomment and use when backend is ready
+      // const result = await resetPasswordApi(data, token);
+      // Expected response: { message: string }
+
+      // Dummy flow (remove when API is ready)
+      if (token === "dummy-token") {
+        toast.success("Password reset successfully! Please log in.");
+        navigate("/login");
+        setLoading(false);
+        return;
+      }
+
       toast.success("Password reset successfully!");
       navigate("/login");
     } catch (err: unknown) {
@@ -95,7 +100,7 @@ const ResetPassword = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleFormSubmit(handleSubmit)} className="space-y-5">
             {/* New Password */}
             <div>
               <label
@@ -115,18 +120,23 @@ const ResetPassword = () => {
                   id="new-password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                   className="w-full pl-10 pr-11 py-3 rounded-xl border text-sm transition-all duration-200 font-body"
                   style={{
-                    borderColor: "rgba(20, 71, 230, 0.2)",
+                    borderColor: errors.password
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)",
                     outline: "none",
                   }}
                   onFocus={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--primary)")
+                    (e.currentTarget.style.borderColor = errors.password
+                      ? "#ef4444"
+                      : "var(--primary)")
                   }
                   onBlur={(e) =>
-                    (e.currentTarget.style.borderColor = "rgba(20, 71, 230, 0.2)")
+                    (e.currentTarget.style.borderColor = errors.password
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)")
                   }
                 />
                 <button
@@ -138,6 +148,11 @@ const ResetPassword = () => {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-xs text-error mt-1 pl-2">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -159,18 +174,23 @@ const ResetPassword = () => {
                   id="confirm-password"
                   type={showConfirm ? "text" : "password"}
                   placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  {...register("confirmPassword")}
                   className="w-full pl-10 pr-11 py-3 rounded-xl border text-sm transition-all duration-200 font-body"
                   style={{
-                    borderColor: "rgba(20, 71, 230, 0.2)",
+                    borderColor: errors.confirmPassword
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)",
                     outline: "none",
                   }}
                   onFocus={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--primary)")
+                    (e.currentTarget.style.borderColor = errors.confirmPassword
+                      ? "#ef4444"
+                      : "var(--primary)")
                   }
                   onBlur={(e) =>
-                    (e.currentTarget.style.borderColor = "rgba(20, 71, 230, 0.2)")
+                    (e.currentTarget.style.borderColor = errors.confirmPassword
+                      ? "#ef4444"
+                      : "rgba(20, 71, 230, 0.2)")
                   }
                 />
                 <button
@@ -182,6 +202,11 @@ const ResetPassword = () => {
                   {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              {errors.confirmPassword && (
+                <p className="text-xs text-error mt-1 pl-2">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
 
             {/* Password strength hint */}

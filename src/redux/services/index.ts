@@ -9,13 +9,9 @@ import toast from "react-hot-toast";
 import { logout } from "../slices/authSlice";
 
 
-let baseUrl = "https://api.saylanimit.com/api";
+let baseUrl = "http://localhost:3000/api"; // Default to localhost for development
 
-// if (process.env.NODE_ENV === "production") {
-//   baseUrl = "http://192.168.20.103:3002/api";
-// } else {
-//   baseUrl = "http://192.168.21.33:3002/api";
-// }
+
 
 const baseQuery = fetchBaseQuery({
   baseUrl,

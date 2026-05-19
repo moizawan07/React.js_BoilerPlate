@@ -11,7 +11,7 @@ import { PublicRoute } from "../components/PublicRoute";
 // Router function
 export function Routes() {
   return useRoutes([
-    // ✅ PUBLIC ROUTES (Login, Forget Password, Reset Password)
+    //  PUBLIC ROUTES 
     {
       path: "login",
       element: (
@@ -37,7 +37,7 @@ export function Routes() {
       ),
     },
 
-    // ✅ PROTECTED ROUTES (Dashboard - Home & Settings)
+    //  PROTECTED ROUTES 
     {
       element: (
         <ProtectedRoute>
@@ -52,7 +52,7 @@ export function Routes() {
       ],
     },
 
-    // ✅ FALLBACK - redirect unknown routes to home
+    //  FALLBACK - redirect unknown routes to home
     {
       path: "*",
       element: <Navigate to="/" replace />,

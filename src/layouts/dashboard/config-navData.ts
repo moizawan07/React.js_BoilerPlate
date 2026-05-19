@@ -10,6 +10,8 @@ import {
   PieChart,
   BarChart3,
   HelpCircle,
+  MessageSquare,
+  MessagesSquare,
 } from "lucide-react";
 
 // Define navigation structure for each role
@@ -21,14 +23,19 @@ const roleBasedNavData: Record<string, any[]> = {
       path: "/",
     },
     {
-      text: "Transactions",
-      icon: CreditCard,
-      path: "/transactions",
+      text: "Conversation History",
+      icon: MessagesSquare,
+      path: "/conversation",
     },
     {
-      text: "Wallet",
-      icon: Wallet,
-      path: "/wallet",
+      text: "Prompt",
+      icon: AirVent,
+      path: "/prompts",
+    },
+    {
+      text: "Settings",
+      icon: Settings,
+      path: "/settings",
     },
   ],
   // if new roles comes so we can easily add them here

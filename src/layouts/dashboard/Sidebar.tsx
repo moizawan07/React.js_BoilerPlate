@@ -1,4 +1,4 @@
-import { ChevronLeft, Heart, LogOut, Moon, Sun } from "lucide-react";
+import { BotMessageSquare, ChevronLeft, Heart, LogOut, Moon, Sun } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, } from "react-redux";
 import { logout } from "../../redux/slices/authSlice";
@@ -48,26 +48,26 @@ function Sidebar({
       `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between p-4 border-b border-foreground/10 pb-[21.5px]">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
             <div className="flex items-center justify-center h-10 w-10 rounded-full bg-linear-to-br from-primary to-primary/50">
-              <Heart className="h-6 w-6 text-white fill-white" />
+              <BotMessageSquare className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-foreground text-lg font-bold">FinSet</h1>
+            <h1 className="text-foreground text-lg font-bold">ChatBot</h1>
           </div>
         )}
         {isCollapsed && (
           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-linear-to-br from-primary to-primary/50 mx-auto">
-            <Heart className="h-6 w-6 text-white fill-white" />
+            <BotMessageSquare className="h-6 w-6 text-white" />
           </div>
         )}
           <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 hover:bg-primary/10 rounded-md transition-colors hidden md:block"
+          className="p-1 hover:bg-primary/10 hover:text-primary text-foreground rounded-md transition-colors hidden md:block"
         >
           <ChevronLeft
-            className={`w-5 h-5 text-foreground transition-transform ${
+            className={`w-5 h-5  transition-transform ${
               isCollapsed ? "rotate-180" : ""
             }`}
           />
@@ -107,7 +107,7 @@ function Sidebar({
           className={`
             w-full flex items-center gap-3 px-4 py-3 rounded-lg
             transition-all duration-200
-            text-foreground hover:bg-red-500/10 hover:text-red-500
+            text-foreground hover:bg-error/5 hover:text-error
             ${isCollapsed ? "justify-center" : "justify-start"}
           `}
         >

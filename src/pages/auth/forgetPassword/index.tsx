@@ -2,32 +2,47 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, ArrowLeft, SendHorizonal } from "lucide-react";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormData,
+} from "../../../validators/auth";
+// import { forgotPasswordApi } from "../../../redux/services/modules/auth/authApi"; // Uncomment when backend is ready
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sentEmail, setSentEmail] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
-    if (!email) {
-      toast.error("Please enter your email address.");
-      return;
-    }
-
-    // ── Dummy check (remove when API is ready) ────────────────────────────
-    if (email === "admin@gmail.com") {
-      toast.success("Password reset link sent! Check your inbox.");
-      setSent(true);
-      return;
-    }
-
-    // ── Real API call ─────────────────────────────────────────────────────
+  const handleSubmit = async (data: ForgotPasswordFormData) => {
     setLoading(true);
+
     try {
-     
+      // API call - Uncomment and use when backend is ready
+      // const result = await forgotPasswordApi(data);
+      // Expected response: { message: string }
+
+      // Dummy check (remove when API is ready)
+      if (data.email === "admin@gmail.com") {
+        toast.success("Password reset link sent! Check your inbox.");
+        setSentEmail(data.email);
+        setSent(true);
+        setLoading(false);
+        return;
+      }
+
       toast.success("Password reset link sent!");
+      setSentEmail(data.email);
       setSent(true);
     } catch (err: unknown) {
       const message =
@@ -77,12 +92,15 @@ const ForgotPassword = () => {
               className="text-sm mt-1 text-center max-w-xs"
               style={{ color: "#6b7280" }}
             >
-              Enter your email and we'll send you a link to reset your password.
+              We will send a reset link to this email address
             </p>
           </div>
 
           {!sent ? (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form
+              onSubmit={handleFormSubmit(handleSubmit)}
+              className="space-y-5"
+            >
               <div>
                 <label
                   htmlFor="forgot-email"
@@ -100,24 +118,35 @@ const ForgotPassword = () => {
                   <input
                     id="forgot-email"
                     type="email"
-                    placeholder="admin@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    {...register("email")}
                     className="w-full pl-10 pr-4 py-3 rounded-xl border text-sm transition-all duration-200 font-body"
                     style={{
-                      borderColor: "rgba(20, 71, 230, 0.2)",
+                      borderColor: errors.email
+                        ? "#ef4444"
+                        : "rgba(20, 71, 230, 0.2)",
                       outline: "none",
                     }}
                     onFocus={(e) =>
-                      (e.currentTarget.style.borderColor = "var(--primary)")
+                      (e.currentTarget.style.borderColor = errors.email
+                        ? "#ef4444"
+                        : "var(--primary)")
                     }
                     onBlur={(e) =>
-                    (e.currentTarget.style.borderColor =
-                      "rgba(20, 71, 230, 0.2)")
+                      (e.currentTarget.style.borderColor = errors.email
+                        ? "#ef4444"
+                        : "rgba(20, 71, 230, 0.2)")
                     }
                   />
                 </div>
-                <p className="text-xs pl-2 mt-1 text-foreground/50  ">we will send you an email for this gmail!</p>
+                {errors.email && (
+                  <p className="text-xs text-error mt-1 pl-2">
+                    {errors.email.message}
+                  </p>
+                )}
+                <p className="text-xs pl-2 mt-1 text-foreground/50">
+                  We will send you a password reset link
+                </p>
               </div>
 
               <button
@@ -173,12 +202,15 @@ const ForgotPassword = () => {
                   style={{ color: "var(--secondary)" }}
                 />
               </div>
-              <p className="font-semibold" style={{ color: "var(--foreground)" }}>
+              <p
+                className="font-semibold"
+                style={{ color: "var(--foreground)" }}
+              >
                 Check your inbox!
               </p>
               <p className="text-sm mt-1" style={{ color: "#6b7280" }}>
                 A reset link has been sent to{" "}
-                <span className="font-semibold">{email}</span>.
+                <span className="font-semibold">{sentEmail}</span>.
               </p>
             </div>
           )}

@@ -1,5 +1,13 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Menu, Search, Bell, Home, User, LogOut } from "lucide-react";
+import {
+  Menu,
+  Search,
+  Bell,
+  Home,
+  User,
+  LogOut,
+  TextAlignEnd,
+} from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, selectUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -15,14 +23,13 @@ export default function TopBar({ setSideBarOn }: any) {
   };
 
   return (
-    <div className="w-full border-b border-foreground/10 flex items-center justify-between px-4 sm:px-6 py-3 bg-background">
-
+    <div className="w-full border-b border-foreground/10 flex items-center justify-between px-4 sm:px-6 py-3.5 bg-background">
       {/* Mobile menu button */}
       <button
         onClick={() => setSideBarOn(true)}
         className="block md:hidden p-2 rounded hover:bg-foreground/10 mr-2"
       >
-        <Menu className="w-5 h-5 text-foreground" />
+        <TextAlignEnd className="w-5 h-5 text-foreground" />
       </button>
 
       {/* Left: Welcome text */}
@@ -37,7 +44,6 @@ export default function TopBar({ setSideBarOn }: any) {
 
       {/* Right: Icons + Avatar */}
       <div className="flex items-center gap-2 sm:gap-3">
-
         {/* Search icon */}
         <button className="w-9 h-9 flex items-center justify-center rounded-xl   border border-dotted border-primary/50 transition-colors">
           <Search className="w-4 h-4 text-foreground/70" />
@@ -95,7 +101,6 @@ function AccountPopover({ data, logoutFunction, user }: any) {
 
   return (
     <div className="relative" ref={popoverRef}>
-
       {/* Avatar + Name & Email trigger button */}
       <button
         onClick={handleToggle}
@@ -124,7 +129,6 @@ function AccountPopover({ data, logoutFunction, user }: any) {
       {/* Dropdown */}
       {open && (
         <div className="absolute right-0 mt-2 w-52 bg-background rounded-xl shadow-lg z-50 border border-primary/10">
-
           {/* User info header */}
           <div className="p-3 border-b border-dashed border-primary/30">
             <p className="text-sm font-medium text-foreground">
@@ -156,7 +160,7 @@ function AccountPopover({ data, logoutFunction, user }: any) {
           <div className="border-t border-dashed border-primary/30 p-2">
             <button
               onClick={logoutFunction}
-              className="flex items-center gap-2 w-full justify-center py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center gap-2 w-full justify-center py-2 text-sm text-error hover:bg-error/5 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               Logout

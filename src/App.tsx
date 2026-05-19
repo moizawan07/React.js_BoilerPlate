@@ -10,13 +10,12 @@ function App() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
 
-  // ✅ Jab app load ho, check karo localStorage mein kya saved hai
+  // check user login status on app load and initialize auth state from localStorage
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
     if (savedAuth) {
       try {
         const authData = JSON.parse(savedAuth);
-        // Agar localStorage mein data hai to Redux state mein load karo
         dispatch(initializeAuth(authData));
       } catch (error) {
         console.error("Failed to parse auth data:", error);
